@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ArmoProx — ساب‌لینک اختصاصی خودت رو بساز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<canvas id="netCanvas" aria-hidden="true"></canvas>
+<div class="orb orb-a" aria-hidden="true"></div>
+<div class="orb orb-b" aria-hidden="true"></div>
+<div class="orb orb-c" aria-hidden="true"></div>
+<div class="scanline" aria-hidden="true"></div>
+
+<header class="site-header">
+  <span class="status-pill"><span class="status-dot"></span>شبکه متصل است</span>
+  <div class="brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 48 48" width="36" height="36" fill="none">
+        <path d="M24 4 L42 12 V24 C42 35 34.5 41.5 24 44 C13.5 41.5 6 35 6 24 V12 Z" stroke="url(#g1)" stroke-width="2.5" fill="rgba(124,92,252,0.08)"/>
+        <path d="M17 24.5 L22 29.5 L32 18.5" stroke="url(#g2)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="g1" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7C5CFC"/><stop offset="0.5" stop-color="#3B82F6"/><stop offset="1" stop-color="#22D3EE"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="17" y1="18" x2="32" y2="29" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#22D3EE"/><stop offset="1" stop-color="#7C5CFC"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </span>
+    <span class="brand-name">ArmoProx</span>
+  </div>
+  <p class="brand-tagline">یک ساب‌لینک بده، یک آدرس تازه و اختصاصی تحویل بگیر.</p>
+</header>
+
+<main class="layout">
+
+  <section class="panel glass generator-panel" aria-labelledby="gen-title">
+    <div class="panel-head">
+      <h2 id="gen-title">ساخت ساب‌لینک جدید</h2>
+      <p class="panel-sub">لینک اصلی رو وارد کن، ArmoProx کانفیگ‌ها رو می‌خونه و یه آدرس تازه بهت می‌ده.</p>
+    </div>
+
+    <form id="generatorForm" novalidate>
+      <div class="field">
+        <label for="subUrl">آدرس ساب‌لینک اصلی</label>
+        <input id="subUrl" name="subUrl" type="url" placeholder="https://example.com/sub/xxxxxxxx" autocomplete="off" required />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="pinCode">کد پین شش‌رقمی</label>
+          <input id="pinCode" name="pinCode" type="password" inputmode="numeric" maxlength="6" placeholder="●●●●●●" autocomplete="off" required />
+          <span class="field-hint">برای مشاهدهٔ دوباره این لینک در تاریخچه لازمت می‌شه</span>
+        </div>
+        <div class="field">
+          <label for="labelInput">عنوان دلخواه <span class="optional">(اختیاری)</span></label>
+          <input id="labelInput" name="labelInput" type="text" placeholder="مثلاً سرور آلمان" autocomplete="off" maxlength="40" />
+        </div>
+      </div>
+
+      <button type="submit" id="generateBtn" class="btn-primary">
+        <span class="btn-label">تولید ساب‌لینک جدید</span>
+        <span class="btn-glow" aria-hidden="true"></span>
+      </button>
+    </form>
+
+    <div id="loadingState" class="loading-state hidden" role="status" aria-live="polite">
+      <div class="ring"></div>
+      <p>در حال دریافت و پردازش کانفیگ‌ها…</p>
+    </div>
+
+    <div id="errorState" class="error-box hidden" role="alert"></div>
+
+    <div id="resultState" class="result-box hidden">
+      <div class="result-badges" id="resultBadges"></div>
+
+      <div class="qr-wrap">
+        <canvas id="qrCanvas" width="220" height="220"></canvas>
+      </div>
+
+      <div class="link-row">
+        <input id="newLinkInput" type="text" readonly aria-label="ساب‌لینک جدید" />
+        <button id="copyBtn" type="button" class="btn-ghost">کپی لینک</button>
+      </div>
+
+      <button id="downloadQrBtn" type="button" class="btn-secondary">دانلود QR Code (PNG)</button>
+    </div>
+  </section>
+
+  <aside class="panel glass history-panel" aria-labelledby="hist-title">
+    <div class="panel-head">
+      <h2 id="hist-title">تاریخچهٔ ساب‌لینک‌ها</h2>
+      <p class="panel-sub">فقط روی همین مرورگر ذخیره می‌شه.</p>
+    </div>
+
+    <div id="historyList" class="history-list"></div>
+    <p id="historyEmpty" class="history-empty">هنوز ساب‌لینکی نساختی. اولین موردت اینجا نمایش داده می‌شه.</p>
+  </aside>
+
+</main>
+
+<footer class="site-footer">
+  <p>ArmoProx روی سرور خودت اجرا می‌شه؛ هیچ کانفیگی جای دیگه‌ای ذخیره نمی‌شه.</p>
+</footer>
+
+<div id="pinModal" class="modal-overlay hidden">
+  <div class="modal-card glass" role="dialog" aria-modal="true" aria-labelledby="pin-modal-title">
+    <h3 id="pin-modal-title">کد پین رو وارد کن</h3>
+    <p class="modal-text">برای نمایش دوبارهٔ این ساب‌لینک، پین شش‌رقمی که موقع ساختش تعیین کردی رو وارد کن.</p>
+    <input id="pinModalInput" type="password" inputmode="numeric" maxlength="6" class="pin-input" placeholder="●●●●●●" />
+    <p id="pinModalError" class="modal-error hidden">پین درست نیست. دوباره امتحان کن.</p>
+    <div class="modal-actions">
+      <button id="pinCancelBtn" type="button" class="btn-ghost">انصراف</button>
+      <button id="pinConfirmBtn" type="button" class="btn-primary small">تایید</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
