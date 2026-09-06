@@ -1,0 +1,15 @@
+{
+  "name": "armoprox",
+  "version": "1.0.0",
+  "description": "ArmoProx - re-host a VPN subscription link behind a new, private URL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
